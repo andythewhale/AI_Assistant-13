@@ -28,7 +28,7 @@ async def consumer(message):
         print("{0}: {1}".format(user["user"]["name"], message["text"]))
         
     else:
-        print(message, file=sys.stderr)
+        print(message, file= sys.stderr)
 
 
 # This connects but notice the added aysyncio funciton.
@@ -37,13 +37,13 @@ async def andros(token = TOKEN):
         Creates a bot that connects with Slack Real Time Messaging API
     """
     rtm = await api_call("rtm.start")
-    assert rtm['ok'], "Connection error with RTM API"
-    
+    assert rtm['ok'], "Error connecting to RTM API"
+
     async with aiohttp.ClientSession() as session:
         async with session.ws_connect(rtm["url"]) as ws:
             async for msg in ws:
                 assert msg.tp == aiohttp.MsgType.text
-                print(json.loads(msg.data))
+                message = json.loads(msg.data)
                 asyncio.ensure_future(consumer(message))
 
 # Run Block
